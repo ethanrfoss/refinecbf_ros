@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))) # FIXME: Make it so that the directory is autoatically in search path
+import numpy as np
 from template.visualization import Visualization
 
 class CrazyflieVisualization(Visualization):
@@ -17,7 +18,7 @@ class CrazyflieVisualization(Visualization):
         
         super().__init__()
 
-    def obstacle_marker(self,obstacle,obstacle_marker_id):
+    def obstacle_marker(self,obstacle,obstacle_marker_id,active):
         marker = Marker()
         marker.header.frame_id = "world"
         if obstacle["type"] == "Circle":
@@ -30,13 +31,19 @@ class CrazyflieVisualization(Visualization):
             marker.scale.z = .5
 
             marker.color = ColorRGBA()
-            marker.color.r = 1.0
-            marker.color.g = 0.0
-            marker.color.b = 0.0
-            marker.color.a = 0.75
+            if active:
+                marker.color.r = 0.0
+                marker.color.g = 1.0
+                marker.color.b = 0.0
+                marker.color.a = 0.75
+            else:
+                marker.color.r = 1.0
+                marker.color.g = 0.0
+                marker.color.b = 0.0
+                marker.color.a = 0.5
 
-            marker.pose.position.y = obstacle['center'][0]
-            marker.pose.position.z = obstacle['center'][1]
+            marker.pose.position.y = obstacle['center'][1]
+            marker.pose.position.z = obstacle['center'][0]
             marker.pose.position.x = 0.0
 
             marker.pose.orientation.x = 0.0
@@ -51,15 +58,21 @@ class CrazyflieVisualization(Visualization):
             marker.action = Marker.ADD
 
             # Set obstacle parameters
-            marker.scale.x = obstacle['maxVal'][0]-obstacle['minVal'][0]
-            marker.scale.y = obstacle['maxVal'][1]-obstacle['minVal'][1]
+            marker.scale.x = obstacle['maxVal'][1]-obstacle['minVal'][1]
+            marker.scale.y = obstacle['maxVal'][0]-obstacle['minVal'][0]
             marker.scale.z = 0.5
 
             marker.color = ColorRGBA()
-            marker.color.r = 1.0
-            marker.color.g = 0.0
-            marker.color.b = 0.0
-            marker.color.a = 0.75
+            if active:
+                marker.color.r = 0.0
+                marker.color.g = 1.0
+                marker.color.b = 0.0
+                marker.color.a = 0.75
+            else:
+                marker.color.r = 1.0
+                marker.color.g = 0.0
+                marker.color.b = 0.0
+                marker.color.a = 0.5
 
             marker.pose.position.y = (obstacle['maxVal'][0]+obstacle['minVal'][0])/2.0
             marker.pose.position.z = (obstacle['maxVal'][1]+obstacle['minVal'][1])/2.0
@@ -116,6 +129,32 @@ class CrazyflieVisualization(Visualization):
         marker.points = [Point(0.0,x,y) for x,y in points]
 
         return marker
+    
+    def goal_marker(self, control_dict,goal_marker_id):
+        marker = Marker()
+        marker.header.frame_id = "world"
+
+        marker.type = Marker.POINTS
+        marker.action = Marker.ADD
+        marker.scale.x = .1 # Point Width
+        marker.scale.y = .1
+
+        marker.color = ColorRGBA()
+        marker.color.a = 1.0
+        marker.color.r = 0.0
+        marker.color.g = 1.0
+        marker.color.b = 0.0
+
+        point = Point()
+        point.x = 0.0
+        point.y = np.array(control_dict['goal']['coordinates'])[self.state_safety_idis][0]
+        point.z = np.array(control_dict['goal']['coordinates'])[self.state_safety_idis][1]
+        marker.points.append(point)
+
+        marker.id = goal_marker_id
+
+        return marker
+
     
     def zero_level_set_contour(self,vf):
         contour = plt.contour(self.grid.coordinate_vectors[0], self.grid.coordinate_vectors[1],vf[:, :, self.grid.nearest_index(self.robot_state)[0][2],self.grid.nearest_index(self.robot_state)[0][3]].T, levels=[0])

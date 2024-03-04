@@ -9,6 +9,7 @@ safety_controls:
   - 0
   - 3 
 
+
 obstacles: 
 
   obstacle1:
@@ -18,12 +19,12 @@ obstacles:
       - 0
       - 1
     minVal:
-      - 0.0
-      - 2.0
+      - 0.5
+      - 0.5
     maxVal:
-      - 4.0
-      - 3.0
-    padding: .2
+      - 1.5
+      - 1.5
+    padding: .1
 
 boundary:
   padding: 0
@@ -31,11 +32,11 @@ boundary:
     - 0
     - 1
   minVal:
-    - -5.0
+    - -4.0
     - -0.1
   maxVal:
-    - 5.0
-    - 6.0
+    - 4.0
+    - 3.0
 
 obstacle_update_rate_hz: 5
 
@@ -67,10 +68,18 @@ control_space:
     - 15.0
 
 disturbance_space:
-  n_dims: 0
-  lo: -1.0
-  hi: 1.0
+  n_dims: 1
+  lo: 
+    - 0.0
+  hi: 
+    - 0.0
 
 actuation_updates: []
 
-disturbance_updates: []
+disturbance_updates:
+  disturbance1:
+    n_dims: 1
+    lo:
+      - 0.0
+    hi:
+      - 0.0
