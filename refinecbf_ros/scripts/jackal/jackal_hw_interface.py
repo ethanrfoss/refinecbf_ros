@@ -43,6 +43,7 @@ class JackalInterface(BaseInterface):
 
         # Convert Quaternion to Yaw
         yaw = np.arctan2(2 * (w * z + x * y), 1 - 2 * (np.power(y, 2) + np.power(z, 2))) + np.pi / 2 # FIXME: why is this necessary?
+        # print(yaw)
 
         state_out_msg = Array()
         state_out_msg.value = [state_in_msg.pose.pose.position.x, state_in_msg.pose.pose.position.y, yaw]

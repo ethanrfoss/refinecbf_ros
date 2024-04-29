@@ -24,6 +24,9 @@
   <!-- Teleop Active or Not-->
   <arg name="teleop" default="True" />
 
+  <!-- Debugger On or Not -->
+  <arg name="debug" default="True" />
+
     <!-- What message passing method to use
           Options:
            1. pubsub:   flattens the vf and passes it 
@@ -164,6 +167,26 @@
     </include>
     <!-- Publish initial pose after turtlebot3_fake node has started -->
     <!-- <node name="publish_odometry" pkg="rostopic" type="rostopic" args="pub -r 1 /odom nav_msgs/Odometry '{header: {stamp: now, frame_id: 'odom'}, child_frame_id: 'base_link', pose: {pose: {position: {x: 1.0, y: 0.0, z: 0.0}, orientation: {x: 0.0, y: 0.0, z: 0.0, w: 1.0}}, covariance: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}}'" /> -->
+  </group>
+
+  <!-- <group if="$(eval arg('hardware') == 1)">
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find turtlebot3_fake)/rviz/turtlebot3_fake.rviz"/>
+  </group> -->
+
+  <group if="$(eval arg('debug') == 1)">
+    <node name="tb_debug_plotter"
+      pkg="refinecbf_ros"
+      type="tb_debug_plotter.py"
+      output="screen">
+      <param name="topics/sdf_update" value="$(arg sdf_update_topic)" />
+      <param name="topics/cbf_state" value="$(arg cbf_state_topic)" />
+      <param name="topics/vf_update" value="$(arg vf_update_topic)" />
+      <param name="vf_update_method" value="$(arg vf_update_method)" />
+      <param name="topics/robot_state" value="$(arg robot_state_topic)" />
+      <param name="topics/cbf_safe_control" value="$(arg cbf_safe_control_topic)" />
+      <param name="topics/robot_external_control" value="$(arg robot_external_control_topic)" />
+      <param name="vf_update_method" value="$(arg vf_update_method)" />
+    </node>
   </group>
 
   <include file="$(find refinecbf_ros)/launch/refine_cbf.launch">
