@@ -37,7 +37,6 @@ class HJReachabilityNode:
         Initializes the HJReachabilityNode. It sets up ROS subscribers for disturbance, actuation, and obstacle updates,
         and a publisher for the value function. It also initializes the Hamilton-Jacobi dynamics and the value function.
         """
-        # self.vf_list = []
         # Load configuration
         config = Config(hj_setup=True)
         # Initialize dynamics, grid, and Hamilton-Jacobi dynamics
@@ -217,8 +216,6 @@ class HJReachabilityNode:
                     )
                     # rospy.loginfo("Time taken to calculate vf: {:.2f}".format(rospy.Time.now().to_sec() - time_now))
                     self.vf = new_values
-                    # self.vf_list.append(self.vf)
-                    # np.save('/home/saslab/vf_list.npy',self.vf_list)
                 
                 if self.vf_update_method == "pubsub":
                     self.vf_pub.publish(ValueFunctionMsg(np.array(self.vf).flatten()))
