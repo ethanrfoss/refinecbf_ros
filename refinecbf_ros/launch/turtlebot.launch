@@ -56,7 +56,9 @@
   <!-- ___________________________________________________________________________________________________________ -->
   <!-- Topics that are typically fixed and are shared between different launch files -->
   <arg name="robot_state_topic" value="/odom" unless="$(arg hardware)"/>
+
   <arg name="robot_state_topic" value="/natnet_ros/robot_1/pose" if="$(arg hardware)"/>
+
   <arg name="cbf_state_topic" value="/safety_filter/state" />
 
   <arg name="disturbance_update_topic" value="/env/disturbance_update" />

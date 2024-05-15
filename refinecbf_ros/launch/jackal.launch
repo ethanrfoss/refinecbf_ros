@@ -24,6 +24,7 @@
   <!-- Teleop Active or Not-->
   <arg name="teleop" default="False" />
 
+
     <!-- What message passing method to use
           Options:
            1. pubsub:   flattens the vf and passes it 
@@ -33,13 +34,15 @@
   <arg name="vf_update_accuracy" default="high" />
 
     <!-- Choose which files to load to describe the environment -->
-  <arg name="env_config_file" default="Experiment2/env.yaml" />
+
+  <arg name="env_config_file" default="Experiment1/env.yaml" />
   
     <!-- Choose which files to load to describe the refinecbf internal nominal controller -->
-  <arg name="control_config_file" default="Experiment2/control.yaml" />
+  <arg name="control_config_file" default="Experiment1/control.yaml" />
 
     <!-- Choose the name of CBF parameter file or initial vf file -->
-  <arg name="CBF_parameter_file" default="Experiment2/CBF_params.yaml" />
+  <arg name="CBF_parameter_file" default="Experiment1/CBF_params.yaml" />
+
   <arg name="initial_vf_file" default="jackal_vf.npy" />
 
     <!-- Choose the Nominal Controller to be used. Options: PD or HJR-->
@@ -171,7 +174,6 @@
     </node>
   </group>
 
-
   <include file="$(find refinecbf_ros)/launch/refine_cbf.launch">
     <arg name="cbf_state_topic" value="$(arg cbf_state_topic)" />
     <arg name="cbf_nominal_control_topic" value="$(arg cbf_nominal_control_topic)" />
@@ -188,5 +190,19 @@
     <arg name="vf_update_method" value="$(arg vf_update_method)" />
     <arg name="vf_update_accuracy" value="$(arg vf_update_accuracy)" />
   </include>
+
+  <group if="$(eval arg('hardware') == 0)">
+    <remap from="$(arg robot_external_control_topic)" to="$(arg robot_safe_control_topic)" />
+    <include file="$(find jackal_gazebo)/launch/empty_world.launch">
+      <arg name="joystick" value="false" />
+    </include>
+  </group>
+
+  <!-- <include file="$(find jackal_viz)/launch/view_robot.launch"/> -->
+  <group>
+    <param name="use_gui" value="true"/>
+    <arg name="config" default="jackal_rviz" />
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find refinecbf_ros)/rviz/$(arg config).rviz" />
+  </group>
 
 </launch>
