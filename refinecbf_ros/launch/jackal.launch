@@ -24,6 +24,7 @@
   <!-- Teleop Active or Not-->
   <arg name="teleop" default="False" />
 
+
     <!-- What message passing method to use
           Options:
            1. pubsub:   flattens the vf and passes it 
@@ -179,5 +180,19 @@
     <arg name="vf_update_method" value="$(arg vf_update_method)" />
     <arg name="vf_update_accuracy" value="$(arg vf_update_accuracy)" />
   </include>
+
+  <group if="$(eval arg('hardware') == 0)">
+    <remap from="$(arg robot_external_control_topic)" to="$(arg robot_safe_control_topic)" />
+    <include file="$(find jackal_gazebo)/launch/empty_world.launch">
+      <arg name="joystick" value="false" />
+    </include>
+  </group>
+
+  <!-- <include file="$(find jackal_viz)/launch/view_robot.launch"/> -->
+  <group>
+    <param name="use_gui" value="true"/>
+    <arg name="config" default="jackal_rviz" />
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find refinecbf_ros)/rviz/$(arg config).rviz" />
+  </group>
 
 </launch>
