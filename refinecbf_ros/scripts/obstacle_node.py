@@ -83,7 +83,7 @@ class ObstacleNode:
             self.update_active_obstacles()
 
     def update_sdf(self):
-        sdf = hj.utils.multivmap(self.build_sdf(), jnp.arange(self.grid.ndim))(self.grid.states)
+        sdf = hj.utils.multivmap(self.build_sdf(), jnp.arange(self.grid.ndim))(self.grid.states) * 10
         rospy.loginfo("Share Safe SDF {:.2f}".format(((sdf >= 0).sum() / sdf.size) * 100))
         if self.vf_update_method == "pubsub":
             self.sdf_update_pub.publish(ValueFunctionMsg(sdf.flatten()))

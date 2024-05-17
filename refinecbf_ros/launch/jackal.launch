@@ -4,7 +4,7 @@
 <!-- Topics that need to be chosen by user and can be varied-->
 
     <!-- Whether we want to use nominal / external control or a safety filter -->
-  <arg name="safety_filter_active" default="False" />
+  <arg name="safety_filter_active" default="True" />
   
     <!-- Whether we want a single fixed value function (no updating) or updating using hj_reachability_node -->
   <arg name="update_vf_online" default="True" /> 
@@ -16,10 +16,10 @@
           2. file:  Load as state_discretized value function 
           3. sdf:   Have the signed distance function be used 
     -->
-  <arg name="vf_initialization_method" default="sdf" />
+  <arg name="vf_initialization_method" default="cbf" />
   
     <!-- Simulation or hardware -->
-  <arg name="hardware" default="False" />
+  <arg name="hardware" default="True" />
 
   <!-- Teleop Active or Not-->
   <arg name="teleop" default="False" />
@@ -33,13 +33,13 @@
   <arg name="vf_update_accuracy" default="high" />
 
     <!-- Choose which files to load to describe the environment -->
-  <arg name="env_config_file" default="Experiment2/env.yaml" />
+  <arg name="env_config_file" default="Experiment3/env.yaml" />
   
     <!-- Choose which files to load to describe the refinecbf internal nominal controller -->
-  <arg name="control_config_file" default="Experiment2/control.yaml" />
+  <arg name="control_config_file" default="Experiment3/control.yaml" />
 
     <!-- Choose the name of CBF parameter file or initial vf file -->
-  <arg name="CBF_parameter_file" default="Experiment2/CBF_params.yaml" />
+  <arg name="CBF_parameter_file" default="Experiment3/CBF_params.yaml" />
   <arg name="initial_vf_file" default="jackal_vf.npy" />
 
     <!-- Choose the Nominal Controller to be used. Options: PD or HJR-->
@@ -48,7 +48,7 @@
   <!-- ___________________________________________________________________________________________________________ -->
   <!-- Topics that are typically fixed and are shared between different launch files -->
   <arg name="robot_state_topic" value="/sim_state" unless="$(arg hardware)"/>
-  <arg name="robot_state_topic" value="/natnet_ros/jackal/pose" if="$(arg hardware)"/>
+  <arg name="robot_state_topic" value="/natnet_ros/robot_1/pose" if="$(arg hardware)"/>
   <arg name="cbf_state_topic" value="/safety_filter/state" />
 
   <arg name="disturbance_update_topic" value="/env/disturbance_update" />
@@ -161,15 +161,6 @@
     <param name="topics/goal_marker" value="$(arg goal_marker_topic)" />
     <param name="vf_update_method" value="$(arg vf_update_method)" />
   </node>
-
-  <group if="$(eval arg('teleop') == 1)">
-    <node name="jackal_teleoperation"
-      pkg="refinecbf_ros"
-      type="jackal_teleop.py"
-      output="screen">
-      <param name="topics/robot_external_control" value="$(arg robot_external_control_topic)" />
-    </node>
-  </group>
 
 
   <include file="$(find refinecbf_ros)/launch/refine_cbf.launch">

@@ -373,7 +373,7 @@ class DubinsCarDynamics(ControlAffineDynamics):
         return jnp.array([0.0, 0.0, 0.0])
 
     def control_matrix(self, state, time: float = 0.0):
-        return jnp.array([[jnp.cos(state[2]), 0.0], [jnp.sin(state[2]), 0.0], [0.0, 1.0]])
+        return jnp.array([[0.0, jnp.sin(state[2])], [0.0, -jnp.cos(state[2])], [1.0, 0.0]])
 
     # def disturbance_jacobian(self, state, time: float = 0.0):
     #     return jnp.array([[1.0, 0.0], [0.0, 1.0], [0.0, 0.0]])

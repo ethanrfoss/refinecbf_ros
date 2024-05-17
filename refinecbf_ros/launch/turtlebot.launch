@@ -16,13 +16,13 @@
           2. file:  Load as state_discretized value function 
           3. sdf:   Have the signed distance function be used 
     -->
-  <arg name="vf_initialization_method" default="sdf" />
+  <arg name="vf_initialization_method" default="cbf" />
   
     <!-- Simulation or hardware -->
   <arg name="hardware" default="False" />
 
   <!-- Teleop Active or Not-->
-  <arg name="teleop" default="True" />
+  <arg name="teleop" default="False" />
 
   <!-- Debugger On or Not -->
   <arg name="debug" default="True" />
@@ -47,11 +47,6 @@
 
     <!-- Choose the Nominal Controller to be used. Options: PD or HJR-->
   <arg name="nominal_controller_type" default="PD" />
-
-    <!-- Start point for the simulator. -->
-  <arg name="sim_init_x" value="-1.75" />
-  <arg name="sim_init_y" value="-1.75" />
-
 
   <!-- ___________________________________________________________________________________________________________ -->
   <!-- Topics that are typically fixed and are shared between different launch files -->
@@ -133,7 +128,7 @@
     <param name="vf_update_method" value="$(arg vf_update_method)" />
   </node>
 
-  <!-- <node name="turtlebot_visualization"
+  <node name="turtlebot_visualization"
     pkg="refinecbf_ros"
     type="tb_visualization.py"
     output="screen">
@@ -146,7 +141,7 @@
     <param name="topics/vf_marker" value="$(arg vf_marker_topic)" />
     <param name="topics/goal_marker" value="$(arg goal_marker_topic)" />
     <param name="vf_update_method" value="$(arg vf_update_method)" />
-  </node> -->
+  </node>
 
   <group if="$(eval arg('teleop') == 1)">
     <!-- <remap from="cmd_vel" to="$(arg robot_external_control_topic)" />

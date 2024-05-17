@@ -55,7 +55,7 @@ class SafetyFilterNode:
             self.safety_filter_solver.dmax = np.array(config.disturbance_space["hi"])
 
         nom_control_topic = rospy.get_param("~topics/nominal_control", "/control/nominal")
-        self.nominal_control_sub = rospy.Subscriber(nom_control_topic, Array, self.callback_safety_filter)
+        self.nominal_control_sub = rospy.Subscriber(nom_control_topic, Array, self.callback_safety_filter, queue_size=1)
         self.state = None
         filtered_control_topic = rospy.get_param("~topics/filtered_control", "/control/filtered")
         self.pub_filtered_control = rospy.Publisher(filtered_control_topic, Array, queue_size=1)
@@ -120,7 +120,8 @@ class SafetyFilterNode:
                 # rospy.loginfo_throttle_identical(1.0, "value at current state:{:.2f}".format(vf))
             safety_control_active = self.safety_filter_solver(self.state.copy(), nominal_control=np.array([nom_control_active]))
             safety_control = nom_control.copy()
-
+            np.set_printoptions(2)
+            rospy.loginfo(f"Difference in control {safety_control_active[0] - nom_control_active}")
             safety_control[self.safety_controls_idis] = safety_control_active[0]
             safety_control_msg.value = safety_control.tolist()  # Ensures compatibility
 

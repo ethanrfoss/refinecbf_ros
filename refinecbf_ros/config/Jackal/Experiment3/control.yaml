@@ -1,8 +1,8 @@
 nominal:
   goal:
     coordinates:
-      - 6.0
-      - 6.0
+      - 2.0
+      - 2.0
       - 0
     padding:
       - 0.05
@@ -13,4 +13,4 @@ nominal:
     solver_accuracy: "high"
   frequency: 20.0
 cbf:
-  gamma: 50.0
+  gamma: 0.2

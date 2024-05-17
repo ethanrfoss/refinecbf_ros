@@ -13,6 +13,7 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 from template.hw_interface import BaseInterface
 import math
+from std_srvs.srv import Empty, EmptyResponse
 
 
 class TurtlebotInterface(BaseInterface):
@@ -39,8 +40,25 @@ class TurtlebotInterface(BaseInterface):
         self.external_control_change_time_buffer = rospy.get_param(
             "/ctr/external_control_change_buffer", 5.0
         )  # seconds
-
+        s = rospy.Service('toggle_move', Empty, self.toggle_movement)
+        self.is_moving = False
         super().__init__()
+
+    def toggle_movement(self, req):
+        if self.is_moving:
+            control_out_msg = self.control_out_msg_type()
+            control_out_msg.linear.x = 0.0
+            control_out_msg.linear.y = 0.0
+            control_out_msg.linear.z = 0.0
+
+            control_out_msg.angular.x = 0.0
+            control_out_msg.angular.y = 0.0
+            control_out_msg.angular.z = 0.0
+            self.safe_control_pub.publish(control_out_msg)
+
+        self.is_moving = not self.is_moving
+        rospy.loginfo("Robot moving? {}".format(self.is_moving))
+        return EmptyResponse()
 
     def callback_state(self, state_in_msg):
         if self.hardware:
@@ -95,10 +113,11 @@ class TurtlebotInterface(BaseInterface):
     def override_safe_control(self):
         curr_time = rospy.get_time()
         # Determine if external control should be published
-        return (
-            self.external_control is not None
-            and (curr_time - self.external_control_ts) <= self.external_control_time_buffer
-        )
+        return not self.is_moving
+        # return (
+        #     self.external_control is not None
+        #     and (curr_time - self.external_control_ts) <= self.external_control_time_buffer
+        # )
 
 
 if __name__ == "__main__":
