@@ -21,7 +21,9 @@ class SafetyFilterNode:
         self.initialized_safety_filter = False  # To ensure initialized when callback is triggered
         self.safety_filter_active = rospy.get_param("~safety_filter_active", True)
         vf_topic = rospy.get_param("~topics/vf_update")
+        sdf_topic = rospy.get_param("~topics/sdf_update")
         self.vf_update_method = rospy.get_param("~vf_update_method")
+        self.use_sdf = rospy.get_param("~use_sdf")
         gamma = rospy.get_param("/ctr/cbf/gamma", 1.0)
         slackify_safety_constraint = rospy.get_param("/ctr/cbf/slack", False)
 
@@ -32,9 +34,15 @@ class SafetyFilterNode:
         self.safety_controls_idis = config.safety_controls
 
         if self.vf_update_method == "pubsub":
-            self.vf_sub = rospy.Subscriber(vf_topic, ValueFunctionMsg, self.callback_vf_update_pubsub)
+            if not self.use_sdf:
+                self.vf_sub = rospy.Subscriber(vf_topic, ValueFunctionMsg, self.callback_vf_update_pubsub)
+            else:
+                self.vf_sub = rospy.Subscriber(sdf_topic, ValueFunctionMsg, self.callback_vf_update_pubsub)
         elif self.vf_update_method == "file":
-            self.vf_sub = rospy.Subscriber(vf_topic, Bool, self.callback_vf_update_file)
+            if not self.use_sdf:
+                self.vf_sub = rospy.Subscriber(vf_topic, Bool, self.callback_vf_update_file)
+            else:
+                self.vf_sub = rospy.Subscriber(sdf_topic, Bool, self.callback_vf_update_file)
         else:
             raise NotImplementedError("{} is not a valid vf update method".format(self.vf_update_method))
         self.state_topic = rospy.get_param("~topics/state", "/state_array")
@@ -92,7 +100,10 @@ class SafetyFilterNode:
     def callback_vf_update_file(self, vf_msg):
         if not vf_msg.data:
             return
-        self.cbf.vf_table = np.array(np.load("./vf.npy")).reshape(self.grid.shape)
+        if not self.use_sdf:
+            self.cbf.vf_table = np.array(np.load("./vf.npy")).reshape(self.grid.shape)
+        else:
+            self.cbf.vf_table = np.array(np.load("./sdf.npy")).reshape(self.grid.shape)
         if not self.initialized_safety_filter:
             rospy.loginfo("Initialized safety filter")
             self.initialized_safety_filter = True

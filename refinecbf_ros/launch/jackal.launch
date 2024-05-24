@@ -19,7 +19,7 @@
   <arg name="vf_initialization_method" default="cbf" />
   
     <!-- Simulation or hardware -->
-  <arg name="hardware" default="True" />
+  <arg name="hardware" default="False" />
 
   <!-- Teleop Active or Not-->
   <arg name="teleop" default="False" />
@@ -34,17 +34,20 @@
   <arg name="vf_update_accuracy" default="high" />
 
     <!-- Choose which files to load to describe the environment -->
-  <arg name="env_config_file" default="Experiment3/env.yaml" />
+  <arg name="env_config_file" default="Experiment2/env.yaml" />
   
     <!-- Choose which files to load to describe the refinecbf internal nominal controller -->
-  <arg name="control_config_file" default="Experiment3/control.yaml" />
+  <arg name="control_config_file" default="Experiment2/control.yaml" />
 
     <!-- Choose the name of CBF parameter file or initial vf file -->
-  <arg name="CBF_parameter_file" default="Experiment3/CBF_params.yaml" />
+  <arg name="CBF_parameter_file" default="Experiment2/CBF_params.yaml" />
   <arg name="initial_vf_file" default="jackal_vf.npy" />
 
     <!-- Choose the Nominal Controller to be used. Options: PD or HJR-->
   <arg name="nominal_controller_type" default="PD" />
+
+    <!-- Use an SDF for the CBF instead of using refineCBF -->
+  <arg name="use_sdf" default="True" />
 
   <!-- ___________________________________________________________________________________________________________ -->
   <!-- Topics that are typically fixed and are shared between different launch files -->
@@ -171,6 +174,7 @@
     <arg name="vf_update_topic" value="$(arg vf_update_topic)" />
     <arg name="actuation_update_topic" value="$(arg actuation_update_topic)" />
     <arg name="sdf_update_topic" value="$(arg sdf_update_topic)" />
+    <arg name="use_sdf" value="$(arg use_sdf)" />
     <arg name="disturbance_update_topic" value="$(arg disturbance_update_topic)" />
     <arg name="safety_filter_active" value="$(arg safety_filter_active)" />
     <arg name="vf_initialization_method" value="$(arg vf_initialization_method)"/>

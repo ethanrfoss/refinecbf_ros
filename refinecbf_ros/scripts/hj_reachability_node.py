@@ -122,7 +122,7 @@ class HJReachabilityNode:
         self.update_vf()  # This keeps spinning
 
     def publish_initial_vf(self):
-        while self.vf_pub.get_num_connections() < 2 and not rospy.is_shutdown():
+        while self.vf_pub.get_num_connections() < 1 and not rospy.is_shutdown():
             rospy.loginfo("HJR node: Waiting for subscribers to connect")
             rospy.sleep(1)
         if self.vf_update_method == "pubsub":
